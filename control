@@ -1,0 +1,9 @@
+Package: com.timur.homebutton
+Name: Home Button Tweak
+Version: 1.0.0
+Architecture: iphoneos-arm64
+Description: Adds a floating home button to SpringBoard.
+Maintainer: Timur
+Author: Timur
+Section: Tweaks
+Depends: mobilesubstrate
