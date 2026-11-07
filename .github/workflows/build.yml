@@ -1,0 +1,43 @@
+name: Build Tweak
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make git curl xz-utils clang build-essential
+
+      - name: Setup Theos and SDK
+        run: |
+          export THEOS=$HOME/theos
+          git clone --recursive https://github.com/theos/theos.git $THEOS
+          git clone https://github.com/theos/sdks.git $HOME/sdks
+          mkdir -p $THEOS/sdks
+          cp -r $HOME/sdks/iPhoneOS*.sdk $THEOS/sdks/
+
+      - name: Setup ldid
+        run: |
+          curl -L -o ldid https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus7/ldid_linux_x86_64
+          chmod +x ldid
+          sudo mv ldid /usr/local/bin/
+
+      - name: Build Tweak
+        run: |
+          export THEOS=$HOME/theos
+          make package FINALPACKAGE=1
+
+      - name: Upload Deb File
+        uses: actions/upload-artifact@v4
+        with:
+          name: HomeButton-Deb
+          path: packages/*.deb
